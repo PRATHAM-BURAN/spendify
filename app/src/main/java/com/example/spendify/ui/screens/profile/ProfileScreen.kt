@@ -165,31 +165,6 @@ fun ProfileScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = OnSurfaceVariantDark
                             )
-
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            // Sync Status Pill
-                            Row(
-                                modifier = Modifier
-                                    .clip(PillShape)
-                                    .background(SurfaceContainerHighDark)
-                                    .padding(horizontal = 14.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.CloudDone,
-                                    contentDescription = null,
-                                    tint = PrimaryDark,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = if (profile?.userId?.startsWith("guest_") == true) "Guest Session" else "Cloud Account Active",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = PrimaryDark,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
                         }
                     }
                 }

@@ -64,23 +64,21 @@ function updateSyncStatusBar() {
 
     const pendingCount = transactions.filter(t => t.syncStatus === 'PENDING_SYNC').length;
 
-    if (!isOnline) {
-        bar.className = 'sync-status-bar offline';
-        text.innerText = '⚡ Offline Mode • Changes saved locally in Room/Storage';
-        badge.innerText = `${pendingCount} pending sync`;
-    } else {
-        bar.className = 'sync-status-bar';
-        if (currentUser) {
-            text.innerText = `Online • Synced with Cloud Firestore (${currentUser.email})`;
+    if (bar && text && badge) {
+        if (!isOnline) {
+            bar.className = 'sync-status-bar offline';
+            text.innerText = '⚡ Offline Mode';
+            badge.innerText = `${pendingCount} pending`;
         } else {
-            text.innerText = 'Online • Local Room active (Sign in for Cloud Backup)';
+            bar.className = 'sync-status-bar';
+            text.innerText = 'Online';
+            badge.innerText = pendingCount > 0 ? `${pendingCount} synced` : 'All synced';
         }
-        badge.innerText = pendingCount > 0 ? `${pendingCount} synced now` : 'All synced';
+    }
 
-        if (pendingCount > 0) {
-            transactions.forEach(t => { t.syncStatus = 'SYNCED'; });
-            localStorage.setItem('spendify_tx', JSON.stringify(transactions));
-        }
+    if (isOnline && pendingCount > 0) {
+        transactions.forEach(t => { t.syncStatus = 'SYNCED'; });
+        localStorage.setItem('spendify_tx', JSON.stringify(transactions));
     }
 }
 
