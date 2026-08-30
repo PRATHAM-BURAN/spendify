@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Spendify - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#c0c1ff",
+                        "on-tertiary-fixed": "#2a1700",
+                        "on-secondary": "#003824",
+                        "surface": "#13131b",
+                        "surface-bright": "#393841",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "surface-dim": "#13131b",
+                        "outline-variant": "#464554",
+                        "on-secondary-fixed": "#002113",
+                        "inverse-surface": "#e4e1ed",
+                        "surface-variant": "#34343d",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "surface-container": "#1f1f27",
+                        "on-primary": "#1000a9",
+                        "primary-fixed": "#e1e0ff",
+                        "background": "#13131b",
+                        "primary-container": "#8083ff",
+                        "secondary-container": "#00a572",
+                        "on-primary-fixed": "#07006c",
+                        "tertiary": "#ffb95f",
+                        "on-tertiary-container": "#3e2400",
+                        "on-tertiary": "#472a00",
+                        "on-error": "#690005",
+                        "error-container": "#93000a",
+                        "surface-container-highest": "#34343d",
+                        "error": "#ffb4ab",
+                        "secondary": "#4edea3",
+                        "on-background": "#e4e1ed",
+                        "on-surface": "#e4e1ed",
+                        "secondary-fixed-dim": "#4edea3",
+                        "secondary-fixed": "#6ffbbe",
+                        "surface-container-high": "#292932",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "on-primary-container": "#0d0096",
+                        "surface-container-low": "#1b1b23",
+                        "inverse-primary": "#494bd6",
+                        "tertiary-container": "#ca8100",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-surface-variant": "#c7c4d7",
+                        "inverse-on-surface": "#303038",
+                        "outline": "#908fa0",
+                        "surface-container-lowest": "#0d0d15",
+                        "on-secondary-fixed-variant": "#005236",
+                        "on-secondary-container": "#00311f",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "primary": "#c0c1ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "32px",
+                        "xl": "48px",
+                        "base": "4px",
+                        "sm": "16px",
+                        "xs": "8px",
+                        "safe-margin": "20px",
+                        "md": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "numeric-xl": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "30px", "fontWeight": "600" }],
+                        "headline-lg": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "numeric-xl": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Light mode specific overrides for frosted glass */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+        }
+        .glass-pill {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        body {
+            background-color: #f3f4f6; /* Light gray background */
+            color: #1f2937; /* Dark text for light mode */
+        }
+        /* Override dark mode text colors from config for light theme */
+        .text-on-surface-variant { color: #6b7280; }
+        .text-primary { color: #4f46e5; }
+        .bg-primary-container { background-color: #e0e7ff; }
+        .text-on-primary-container { color: #3730a3; }
+        .bg-surface-container { background-color: rgba(255, 255, 255, 0.8); }
+    </style>
+</head>
+<body class="antialiased min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-safe-margin w-full h-16 sticky top-0 z-40 backdrop-blur-xl bg-white/60">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A close up portrait of a young professional smiling softly, bright lighting, light mode aesthetic, clean white background, modern corporate headshot style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcBjrz6GXde2H6WeRlTm7RP9qIwd2E6sj99vZFGO1ggxN-YO-5m0HuZVdtelOpNFhLP9C0cBBu6mfyCAROyhlC8RrxWLuViyOE_71b1O85mhevIiKnYzQLFz1QMq6kpDwdb2wa319j6gy5SHCZhmD7mZ50IdE3FaeYzqMNreiJLo-pw07UHcpuX_gphtcNebB1No3O-3AGXtLvipFaKM63qg98fm7Lfv4NQ2AkuEbo5VbQFV31F6loTQ"/>
+</div>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-gray-900 tracking-tight">Spendify</h1>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-200/50 transition-colors">
+<span class="material-symbols-outlined text-gray-700" data-icon="settings">settings</span>
+</button>
+</header>
+<main class="px-safe-margin pt-sm flex flex-col gap-lg">
+<!-- Welcome Section -->
+<section>
+<p class="font-body-md text-gray-500 mb-1">Welcome back, Alex!</p>
+<h2 class="font-headline-lg-mobile text-gray-900">Here's your summary</h2>
+</section>
+<!-- Main Balance Card (Bento Style) -->
+<section class="glass-card rounded-[32px] p-md relative overflow-hidden">
+<!-- Decorative Background Element -->
+<div class="absolute -top-20 -right-20 w-64 h-64 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
+<div class="relative z-10 flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="font-label-md text-gray-600 uppercase tracking-wider">Total Balance</span>
+<span class="glass-pill px-3 py-1 rounded-full font-label-md text-indigo-700 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">trending_up</span> +2.4%
+                    </span>
+</div>
+<div class="font-numeric-xl text-gray-900">$12,450.00</div>
+<div class="flex gap-sm mt-xs">
+<button class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-3 flex items-center justify-center gap-2 font-label-md transition-colors shadow-md shadow-indigo-200">
+<span class="material-symbols-outlined text-[20px]">add</span> Add Funds
+                    </button>
+<button class="flex-1 glass-pill text-gray-800 rounded-xl py-3 flex items-center justify-center gap-2 font-label-md hover:bg-white/80 transition-colors">
+<span class="material-symbols-outlined text-[20px]">send</span> Send
+                    </button>
+</div>
+</div>
+</section>
+<!-- Budget Progress -->
+<section class="flex flex-col gap-sm">
+<h3 class="font-headline-lg-mobile text-[20px] text-gray-900">Monthly Budget</h3>
+<div class="glass-card rounded-2xl p-sm">
+<div class="flex justify-between items-end mb-2">
+<div class="font-body-md text-gray-600">Spent so far</div>
+<div class="font-numeric-xl text-[24px] text-gray-900">$840 <span class="text-[16px] text-gray-400">/ $1,500</span></div>
+</div>
+<!-- Progress Bar Track -->
+<div class="h-3 w-full bg-emerald-100 rounded-full overflow-hidden">
+<!-- Progress Bar Fill (Green state) -->
+<div class="h-full bg-emerald-500 rounded-full w-[56%] relative">
+<div class="absolute inset-0 bg-white/20 w-full h-full rounded-full shimmer"></div>
+</div>
+</div>
+<div class="flex justify-between mt-2 font-label-md text-gray-500 text-[12px]">
+<span>15 days left</span>
+<span class="text-emerald-600">On track</span>
+</div>
+</div>
+</section>
+<!-- Recent Transactions -->
+<section class="flex flex-col gap-sm">
+<div class="flex justify-between items-center">
+<h3 class="font-headline-lg-mobile text-[20px] text-gray-900">Recent Activity</h3>
+<button class="font-label-md text-indigo-600 hover:text-indigo-800">View All</button>
+</div>
+<div class="glass-card rounded-2xl p-2 flex flex-col gap-1">
+<!-- Transaction 1 -->
+<div class="flex items-center justify-between p-2 rounded-xl hover:bg-white/50 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+<span class="material-symbols-outlined">restaurant</span>
+</div>
+<div>
+<div class="font-label-md text-gray-900">Sweetgreen</div>
+<div class="font-body-md text-[12px] text-gray-500">Food &amp; Dining</div>
+</div>
+</div>
+<div class="font-numeric-xl text-[16px] text-gray-900">-$24.50</div>
+</div>
+<!-- Transaction 2 -->
+<div class="flex items-center justify-between p-2 rounded-xl hover:bg-white/50 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+<span class="material-symbols-outlined">subscriptions</span>
+</div>
+<div>
+<div class="font-label-md text-gray-900">Netflix</div>
+<div class="font-body-md text-[12px] text-gray-500">Entertainment</div>
+</div>
+</div>
+<div class="font-numeric-xl text-[16px] text-gray-900">-$15.99</div>
+</div>
+<!-- Transaction 3 -->
+<div class="flex items-center justify-between p-2 rounded-xl hover:bg-white/50 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div>
+<div class="font-label-md text-gray-900">Salary</div>
+<div class="font-body-md text-[12px] text-gray-500">Income</div>
+</div>
+</div>
+<div class="font-numeric-xl text-[16px] text-emerald-600">+$3,200.00</div>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-28 right-safe-margin w-14 h-14 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full shadow-lg shadow-indigo-300 flex items-center justify-center text-white hover:scale-105 transition-transform z-50">
+<span class="material-symbols-outlined" data-weight="fill">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-6 left-0 right-0 mx-auto w-[90%] max-w-md z-50 flex justify-around items-center p-2 bg-surface-container/60 backdrop-blur-2xl border border-outline-variant/20 shadow-lg shadow-gray-200/50 rounded-full">
+<!-- dashboard (Active) -->
+<button class="flex items-center justify-center bg-indigo-100 text-indigo-700 rounded-full w-12 h-12 shadow-[0_0_15px_rgba(99,102,241,0.2)] scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="dashboard" data-weight="fill" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+</button>
+<!-- history -->
+<button class="flex items-center justify-center text-gray-500 hover:bg-white/40 rounded-full w-12 h-12 transition-colors">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</button>
+<!-- add_circle (Hidden visually for layout balance, represented by FAB) -->
+<button class="flex items-center justify-center text-gray-500 hover:bg-white/40 rounded-full w-12 h-12 transition-colors opacity-0 pointer-events-none">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+</button>
+<!-- pie_chart -->
+<button class="flex items-center justify-center text-gray-500 hover:bg-white/40 rounded-full w-12 h-12 transition-colors">
+<span class="material-symbols-outlined" data-icon="pie_chart">pie_chart</span>
+</button>
+<!-- account_balance_wallet -->
+<button class="flex items-center justify-center text-gray-500 hover:bg-white/40 rounded-full w-12 h-12 transition-colors">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+</button>
+</nav>
+<style>
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .shimmer {
+            animation: shimmer 2s infinite linear;
+        }
+    </style>
+</body></html>

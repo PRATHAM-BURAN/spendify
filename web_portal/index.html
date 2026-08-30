@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spendify — Personal Expense & Budget Tracker</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="app_icon.png">
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Top Wi-Fi APK Download Bar -->
+    <div class="apk-banner">
+        <div class="apk-banner-info">
+            <img src="favicon.png" alt="Spendify Icon" style="width: 38px; height: 38px; border-radius: 9px; object-fit: contain; box-shadow: 0 4px 12px rgba(0, 100, 200, 0.3);">
+            <div>
+                <div class="apk-banner-title">Spendify Android APK</div>
+                <div class="apk-banner-sub">Install directly on this device</div>
+            </div>
+        </div>
+        <a href="/Spendify.apk" class="apk-download-btn" download="Spendify.apk" title="Download Android APK">
+            <i data-lucide="download" class="download-icon"></i> Download APK
+        </a>
+    </div>
+
+    <!-- Live Sync Status Bar -->
+    <div class="sync-status-bar" id="syncStatusBar">
+        <div class="sync-left">
+            <span class="sync-dot"></span>
+            <span id="syncStatusText">Online • Cloud Database Connected</span>
+        </div>
+        <span id="syncPendingBadge" style="opacity: 0.8;">0 pending</span>
+    </div>
+
+    <!-- Header with Back Navigation & Profile Avatar -->
+    <header class="app-header">
+        <button class="header-back-btn" id="headerBackBtn" aria-label="Go Back" title="Back" onclick="navigateBack()" style="display: none;">
+            <i data-lucide="arrow-left" class="header-icon"></i>
+        </button>
+        <div class="user-avatar" id="userAvatar" onclick="openProfileModal()" title="View Profile & Settings">?</div>
+        <div>
+            <h1 class="app-title" id="screenTitle">Spendify</h1>
+            <div id="userHeaderSubtitle" style="font-size: 11px; color: var(--text-muted); text-align: center;">Not Signed In</div>
+        </div>
+        <button class="header-action-btn" id="openSettingsBtn" aria-label="Open Settings" title="Settings" onclick="navigateTo('settings')">
+            <i data-lucide="settings" class="header-icon"></i>
+        </button>
+    </header>
+
+    <!-- DASHBOARD SCREEN -->
+    <main id="screenDashboard" class="screen-view active">
+        <!-- Bento Total Balance Card -->
+        <div class="bento-balance-card">
+            <div class="balance-label">Total Balance</div>
+            <div class="balance-amount" id="totalBalanceDisplay">$0.00</div>
+            <div class="cashflow-split">
+                <div class="cashflow-item">
+                    <div class="cashflow-icon income">
+                        <i data-lucide="arrow-up-right" class="cashflow-arrow"></i>
+                    </div>
+                    <div>
+                        <div class="cashflow-title">Income</div>
+                        <div class="cashflow-value income" id="totalIncomeDisplay">+$0.00</div>
+                    </div>
+                </div>
+                <div class="cashflow-item">
+                    <div class="cashflow-icon expense">
+                        <i data-lucide="arrow-down-left" class="cashflow-arrow"></i>
+                    </div>
+                    <div>
+                        <div class="cashflow-title">Expense</div>
+                        <div class="cashflow-value expense" id="totalExpenseDisplay">-$0.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Tracker Shortcuts (Calendar & Reports) -->
+        <div class="quick-nav-row">
+            <div class="quick-nav-chip" onclick="navigateTo('calendar')">
+                <div class="quick-nav-icon purple">
+                    <i data-lucide="calendar"></i>
+                </div>
+                <div>
+                    <div class="quick-nav-title">Calendar</div>
+                    <div class="quick-nav-sub">Daily Tracker</div>
+                </div>
+            </div>
+            <div class="quick-nav-chip" onclick="navigateTo('reports')">
+                <div class="quick-nav-icon teal">
+                    <i data-lucide="pie-chart"></i>
+                </div>
+                <div>
+                    <div class="quick-nav-title">Reports</div>
+                    <div class="quick-nav-sub">Analytics & Trends</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Budget Progress -->
+        <div class="budget-progress-card" onclick="navigateTo('budgets')" style="cursor: pointer;">
+            <div class="budget-header">
+                <span class="budget-title">Monthly Budget</span>
+                <span class="budget-percent" id="budgetPercentDisplay">0% Used</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="budgetProgressBar"></div>
+            </div>
+            <div class="budget-subtext" id="budgetRemainingDisplay">$0.00 remaining of $0.00</div>
+        </div>
+
+        <!-- Top Categories -->
+        <div class="section-header">
+            <h2 class="section-title">Top Categories</h2>
+            <button class="section-action" onclick="navigateTo('reports')">View All</button>
+        </div>
+        <div class="category-chips-row" id="topCategoriesRow">
+            <div class="cat-chip active"><i data-lucide="utensils" class="chip-icon"></i> Food & Dining</div>
+            <div class="cat-chip"><i data-lucide="shopping-cart" class="chip-icon"></i> Groceries</div>
+            <div class="cat-chip"><i data-lucide="receipt" class="chip-icon"></i> Utilities</div>
+            <div class="cat-chip"><i data-lucide="car" class="chip-icon"></i> Transport</div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="section-header">
+            <h2 class="section-title">Recent Transactions</h2>
+            <button class="section-action" onclick="navigateTo('history')">See History</button>
+        </div>
+        <div class="transactions-feed" id="dashboardRecentFeed">
+            <div class="empty-state-card" onclick="openAddModal()">
+                <div class="empty-title">No transactions yet</div>
+                <div class="empty-sub">Tap the + button below to record your first expense or income.</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- CALENDAR SCREEN (TRACKING ACCORDINGLY) -->
+    <section id="screenCalendar" class="screen-view">
+        <div class="calendar-card">
+            <div class="calendar-month-header">
+                <button class="calendar-nav-btn" onclick="prevCalendarMonth()" aria-label="Previous Month">
+                    <i data-lucide="chevron-left"></i>
+                </button>
+                <div class="calendar-month-title" id="calendarMonthYearTitle">August 2026</div>
+                <button class="calendar-nav-btn" onclick="nextCalendarMonth()" aria-label="Next Month">
+                    <i data-lucide="chevron-right"></i>
+                </button>
+            </div>
+
+            <!-- Days of Week Header -->
+            <div class="calendar-weekdays-row">
+                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+            </div>
+
+            <!-- 7-Column Days Grid -->
+            <div class="calendar-grid" id="calendarDaysGrid">
+                <!-- Dynamically generated day cells -->
+            </div>
+        </div>
+
+        <!-- Selected Date Summary -->
+        <div class="calendar-day-summary-card">
+            <div class="day-summary-left">
+                <div class="day-summary-date" id="calendarSelectedDateLabel">Today</div>
+                <div class="day-summary-totals" id="calendarSelectedDateTotals">Expense: $0.00 | Income: $0.00</div>
+            </div>
+            <button class="day-add-btn" onclick="openAddModal()">+ Add</button>
+        </div>
+
+        <!-- Transactions for Selected Date -->
+        <div class="section-header">
+            <h3 class="section-title" id="calendarDayTxHeader">Day Transactions</h3>
+        </div>
+        <div class="transactions-feed" id="calendarDayFeed">
+            <div class="empty-state-card">
+                <div class="empty-title">No spending on this date</div>
+                <div class="empty-sub">Tap "+ Add" to log an expense or income for this day.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRANSACTION HISTORY SCREEN -->
+    <section id="screenHistory" class="screen-view">
+        <div class="search-filter-bar">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="txSearchInput" class="search-input" placeholder="Search by note, category, amount..." oninput="filterHistory()">
+        </div>
+
+        <div class="filter-pills-row">
+            <button class="filter-pill active" onclick="setHistoryFilter('ALL', this)">All</button>
+            <button class="filter-pill" onclick="setHistoryFilter('EXPENSE', this)">Expenses</button>
+            <button class="filter-pill" onclick="setHistoryFilter('INCOME', this)">Income</button>
+        </div>
+
+        <div class="transactions-feed" id="historyFeedList">
+            <!-- Populated dynamically -->
+        </div>
+    </section>
+
+    <!-- REPORTS & CHARTS SCREEN -->
+    <section id="screenReports" class="screen-view">
+        <div class="chart-card">
+            <h3 class="chart-card-title">Category Breakdown</h3>
+            <svg width="220" height="220" viewBox="0 0 220 220" id="donutChartSvg">
+                <!-- Dynamic SVG Donut Slices -->
+            </svg>
+            <div class="chart-legend" id="chartLegendList">
+                <!-- Legend items -->
+            </div>
+        </div>
+
+        <div class="chart-card stretch">
+            <h3 class="chart-card-title">6-Month Spending Trend</h3>
+            <svg class="trend-svg" viewBox="0 0 400 140" id="trendChartSvg">
+                <!-- Dynamic Trend Line -->
+            </svg>
+            <div class="trend-months-row">
+                <span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span class="trend-active-month">Aug</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- BUDGETS SCREEN -->
+    <section id="screenBudgets" class="screen-view">
+        <div class="section-header">
+            <h2 class="section-title">Monthly Limits</h2>
+            <button class="section-action" onclick="openBudgetPrompt()">+ Set Limit</button>
+        </div>
+
+        <div class="budget-progress-card highlight">
+            <div class="budget-header">
+                <span class="budget-title bold">Overall Total Budget</span>
+                <span class="budget-percent" id="overallBudgetPercent">0% Used</span>
+            </div>
+            <div class="progress-track large">
+                <div class="progress-fill" id="overallBudgetBar"></div>
+            </div>
+            <div class="budget-subtext" id="overallBudgetDetails">$0.00 left of $0.00</div>
+        </div>
+
+        <div class="section-title sub">Category Limits</div>
+        <div id="categoryBudgetsList" class="budgets-list-column">
+            <!-- Category budgets -->
+        </div>
+    </section>
+
+    <!-- SETTINGS SCREEN -->
+    <section id="screenSettings" class="screen-view">
+        <div class="settings-card">
+            <div class="settings-item" onclick="openProfileModal()">
+                <div class="settings-left">
+                    <i data-lucide="user" class="settings-icon"></i>
+                    <div>
+                        <div id="settingsProfileName" style="font-weight: 600;">Not Signed In</div>
+                        <div id="settingsProfileEmail" style="font-size: 12px; color: var(--text-muted);">Tap to View Profile & Log Out</div>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right" class="settings-chevron"></i>
+            </div>
+            <div class="settings-item" onclick="promptChangeCurrency()">
+                <div class="settings-left">
+                    <i data-lucide="dollar-sign" class="settings-icon"></i>
+                    <span>Currency</span>
+                </div>
+                <span class="settings-badge" id="activeCurrencyDisplay">USD ($)</span>
+            </div>
+            <div class="settings-item" onclick="exportCSV()">
+                <div class="settings-left">
+                    <i data-lucide="download" class="settings-icon"></i>
+                    <span>Export All Transactions (CSV)</span>
+                </div>
+                <i data-lucide="chevron-right" class="settings-chevron"></i>
+            </div>
+            <div class="settings-item" onclick="clearAllData()">
+                <div class="settings-left">
+                    <i data-lucide="trash-2" class="settings-icon danger"></i>
+                    <span class="settings-text danger">Clear All Data</span>
+                </div>
+                <i data-lucide="chevron-right" class="settings-chevron"></i>
+            </div>
+            <div class="settings-item" onclick="signOutUser()">
+                <div class="settings-left">
+                    <i data-lucide="log-out" class="settings-icon" style="color: var(--error);"></i>
+                    <span class="settings-text" style="color: var(--error); font-weight: 600;">Log Out</span>
+                </div>
+                <i data-lucide="chevron-right" class="settings-chevron"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating 5-Tab Bottom Navigation Dock -->
+    <nav class="bottom-nav-dock">
+        <button class="nav-tab-btn active" id="tabDashboard" aria-label="Dashboard" title="Dashboard" onclick="navigateTo('dashboard')">
+            <i data-lucide="layout-grid" class="nav-tab-icon"></i>
+        </button>
+        <button class="nav-tab-btn" id="tabCalendar" aria-label="Calendar Tracker" title="Calendar" onclick="navigateTo('calendar')">
+            <i data-lucide="calendar" class="nav-tab-icon"></i>
+        </button>
+        <button class="nav-fab-center" aria-label="Add Transaction" title="Add Transaction" onclick="openAddModal()">
+            <i data-lucide="plus" class="fab-icon"></i>
+        </button>
+        <button class="nav-tab-btn" id="tabHistory" aria-label="History" title="History" onclick="navigateTo('history')">
+            <i data-lucide="history" class="nav-tab-icon"></i>
+        </button>
+        <button class="nav-tab-btn" id="tabBudgets" aria-label="Budgets" title="Budgets" onclick="navigateTo('budgets')">
+            <i data-lucide="wallet" class="nav-tab-icon"></i>
+        </button>
+    </nav>
+</div>
+
+<!-- AUTHENTICATION MODAL (SIGN IN & SIGN UP) -->
+<div class="modal-overlay" id="authModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="authModalTitle">Sign In</h3>
+            <button class="close-modal-btn" aria-label="Close modal" title="Close" onclick="closeAuthModal()">
+                <i data-lucide="x" class="close-icon"></i>
+            </button>
+        </div>
+
+        <div class="type-switcher" style="margin-bottom: 20px;">
+            <button class="type-btn active expense" id="authModeSignInBtn" onclick="setAuthMode('SIGN_IN')">Sign In</button>
+            <button class="type-btn" id="authModeSignUpBtn" onclick="setAuthMode('SIGN_UP')">Sign Up</button>
+        </div>
+
+        <div id="signUpFields" style="display: none;">
+            <div class="form-group">
+                <label class="form-label" for="authFullName">Full Name</label>
+                <input type="text" id="authFullName" class="form-input" placeholder="e.g. John Doe">
+                <div class="form-error-msg" id="nameErrorMsg">Please enter your full name (at least 2 characters).</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="authEmail">Email Address</label>
+            <input type="email" id="authEmail" class="form-input" placeholder="e.g. user@example.com">
+            <div class="form-error-msg" id="emailErrorMsg">Please enter a valid email address.</div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="authPassword">Password</label>
+            <input type="password" id="authPassword" class="form-input" placeholder="Minimum 6 characters (letters & numbers)">
+            <div class="form-error-msg" id="passwordErrorMsg">Password must be at least 6 characters with letters and numbers.</div>
+        </div>
+
+        <div id="confirmPasswordField" style="display: none;">
+            <div class="form-group">
+                <label class="form-label" for="authConfirmPassword">Confirm Password</label>
+                <input type="password" id="authConfirmPassword" class="form-input" placeholder="Re-enter password">
+                <div class="form-error-msg" id="confirmPasswordErrorMsg">Passwords do not match.</div>
+            </div>
+        </div>
+
+        <button class="submit-btn" id="authSubmitBtn" onclick="submitAuthForm()">Sign In to Spendify</button>
+    </div>
+</div>
+
+<!-- ADD TRANSACTION MODAL -->
+<div class="modal-overlay" id="addTxModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="addTxTitle">Add Expense</h3>
+            <button class="close-modal-btn" aria-label="Close modal" title="Close" onclick="closeAddModal()">
+                <i data-lucide="x" class="close-icon"></i>
+            </button>
+        </div>
+
+        <div class="type-switcher">
+            <button class="type-btn active expense" id="typeExpenseBtn" onclick="setTxType('EXPENSE')">Expense</button>
+            <button class="type-btn" id="typeIncomeBtn" onclick="setTxType('INCOME')">Income</button>
+        </div>
+
+        <div class="amount-input-container">
+            <span class="currency-symbol" id="modalCurrencySymbol">$</span>
+            <input type="number" id="inputAmount" class="amount-input" placeholder="0.00" step="0.01">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Category</label>
+            <div class="category-grid" id="modalCategoryGrid">
+                <!-- Categories populated by JS -->
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="inputNote">Note / Payee</label>
+            <input type="text" id="inputNote" class="form-input" placeholder="e.g. Starbucks, Groceries, Salary">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Payment Method</label>
+            <div class="payment-pills" id="modalPaymentPills">
+                <div class="pay-pill selected" onclick="selectPayment(this, 'Card')">Card</div>
+                <div class="pay-pill" onclick="selectPayment(this, 'Cash')">Cash</div>
+                <div class="pay-pill" onclick="selectPayment(this, 'UPI')">UPI</div>
+                <div class="pay-pill" onclick="selectPayment(this, 'Bank Transfer')">Bank Transfer</div>
+            </div>
+        </div>
+
+        <button class="submit-btn" onclick="saveTransaction()">Save Transaction</button>
+    </div>
+</div>
+
+<!-- USER PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal-content" style="max-width: 420px;">
+        <div class="modal-header">
+            <h3 class="modal-title">My Profile</h3>
+            <button class="close-modal-btn" aria-label="Close modal" title="Close" onclick="closeProfileModal()">
+                <i data-lucide="x" class="close-icon"></i>
+            </button>
+        </div>
+
+        <div style="text-align: center; padding: 12px 0 20px;">
+            <div class="user-avatar" id="modalUserAvatarLarge" style="width: 76px; height: 76px; font-size: 30px; margin: 0 auto 12px; background: rgba(139, 92, 246, 0.2); border: 2px solid var(--primary);">U</div>
+            <div id="modalUserName" style="font-size: 19px; font-weight: 700; color: #fff;">User Name</div>
+            <div id="modalUserEmail" style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">user@example.com</div>
+            <div id="modalCloudBadge" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 11px; font-weight: 600; margin-top: 10px;">
+                <span class="sync-dot" style="width: 6px; height: 6px; background: #10b981;"></span> Cloud Account Active
+            </div>
+        </div>
+
+        <!-- Live Stats Grid -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 14px; padding: 12px; text-align: center;">
+                <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Transactions</div>
+                <div id="profileTxCount" style="font-size: 18px; font-weight: 700; color: var(--primary); margin-top: 4px;">0</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 14px; padding: 12px; text-align: center;">
+                <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Total Spent</div>
+                <div id="profileTotalSpent" style="font-size: 16px; font-weight: 700; color: var(--error); margin-top: 4px;">$0.00</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 14px; padding: 12px; text-align: center;">
+                <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Total Income</div>
+                <div id="profileTotalIncome" style="font-size: 16px; font-weight: 700; color: var(--success); margin-top: 4px;">$0.00</div>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px;">
+            <button class="menu-item-row" onclick="closeProfileModal(); navigateTo('settings');" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 12px; color: var(--text); border: none; cursor: pointer; text-align: left; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i data-lucide="settings" style="width: 18px; height: 18px; color: var(--primary);"></i>
+                    <span style="font-size: 14px; font-weight: 500;">App Settings & Preferences</span>
+                </div>
+                <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
+            </button>
+            <button class="menu-item-row" onclick="closeProfileModal(); navigateTo('calendar');" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 12px; color: var(--text); border: none; cursor: pointer; text-align: left; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i data-lucide="calendar" style="width: 18px; height: 18px; color: var(--primary);"></i>
+                    <span style="font-size: 14px; font-weight: 500;">Calendar Tracker</span>
+                </div>
+                <i data-lucide="chevron-right" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
+            </button>
+        </div>
+
+        <!-- Prominent Log Out Button -->
+        <button class="submit-btn" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700;" onclick="signOutUser()">
+            <i data-lucide="log-out" style="width: 18px; height: 18px;"></i> Log Out
+        </button>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
